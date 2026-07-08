@@ -32,3 +32,8 @@ resource "azurerm_resource_group" "casopract2" {
     proyecto = "casopractico2"
   }
 }
+#cambiar nombre
+moved {
+  from = azurerm_resource_group.rg
+  to   = azurerm_resource_group.casopract2
+}
