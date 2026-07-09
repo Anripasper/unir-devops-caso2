@@ -1,0 +1,115 @@
+---
+- name: Desplegar proyectos-web con persistencia en AKS
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    app_name: proyectos-web
+    app_image: "{{ acr_login_server }}/{{ app_name }}:{{ image_tag }}"
+    pvc_size: "1Gi"
+    storage_class: "managed-csi" 
+    kubeconfig_path: "{{ playbook_dir }}/kubeconfig"
+
+  tasks:
+    - name: Crear imagePullSecret con las credenciales del ACR
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig_path }}"
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Secret
+          type: kubernetes.io/dockerconfigjson
+          metadata:
+            name: acr-credentials
+          data:
+            .dockerconfigjson: "{{ {'auths': {acr_login_server: {'username': acr_username, 'password': acr_password, 'auth': (acr_username ~ ':' ~ acr_password) | b64encode}}} | to_json | b64encode }}"
+
+    - name: Crear el PersistentVolumeClaim
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig_path }}"
+        state: present
+        definition:
+          apiVersion: v1
+          kind: PersistentVolumeClaim
+          metadata:
+            name: "{{ app_name }}-data-pvc"
+          spec:
+            accessModes: ["ReadWriteOnce"] 
+            storageClassName: "{{ storage_class }}"
+            resources:
+              requests:
+                storage: "{{ pvc_size }}"
+
+    - name: Crear el Deployment
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig_path }}"
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: "{{ app_name }}"
+            labels: { app: "{{ app_name }}" }
+          spec:
+            replicas: 1
+            selector:
+              matchLabels: { app: "{{ app_name }}" }
+            template:
+              metadata:
+                labels: { app: "{{ app_name }}" }
+              spec:
+                imagePullSecrets:
+                  - name: acr-credentials
+                initContainers:
+                  - name: seed-content
+                    image: "{{ app_image }}"
+                    command: ["/seed-entrypoint.sh"]
+                    volumeMounts:
+                      - name: data
+                        mountPath: /data
+                containers:
+                  - name: nginx
+                    image: "{{ app_image }}"
+                    ports:
+                      - containerPort: 80
+                    volumeMounts:
+                      - name: data
+                        mountPath: /usr/share/nginx/html
+                volumes:
+                  - name: data
+                    persistentVolumeClaim:
+                      claimName: "{{ app_name }}-data-pvc"
+
+    - name: Crear el Service LoadBalancer
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig_path }}"
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: "{{ app_name }}-svc"
+          spec:
+            type: LoadBalancer
+            selector: { app: "{{ app_name }}" }
+            ports:
+              - port: 80
+                targetPort: 80
+
+    - name: Esperar a que el Service tenga EXTERNAL-IP
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig_path }}"
+        kind: Service
+        name: "{{ app_name }}-svc"
+        namespace: default
+      register: svc_info
+      until: >-
+        svc_info.resources | length > 0 and
+        svc_info.resources[0].status.loadBalancer.ingress is defined
+      retries: 30
+      delay: 10
+
+    - name: Mostrar la URL publica de la aplicacion
+      ansible.builtin.debug:
+        msg: "App disponible en: http://{{ svc_info.resources[0].status.loadBalancer.ingress[0].ip }}"
