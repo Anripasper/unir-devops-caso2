@@ -1,0 +1,47 @@
+# =============================================================================
+---
+- name: Desplegar cv-web con Podman en la VM
+  hosts: podman_vm
+  become: true
+  vars:
+    app_name: cv-web
+  tasks:
+    - name: Instalar Podman
+      ansible.builtin.apt:
+        name: podman
+        state: present
+        update_cache: true
+
+    - name: Login en el ACR
+      containers.podman.podman_login:
+        registry: "{{ acr_login_server }}"
+        username: "{{ acr_username }}"
+        password: "{{ acr_password }}"
+
+    - name: Descargar la imagen de la aplicacion
+      containers.podman.podman_image:
+        name: "{{ acr_login_server }}/{{ app_name }}:{{ image_tag }}"
+        pull: true
+
+    - name: Arrancar el contenedor y generar su unidad systemd
+      containers.podman.podman_container:
+        name: "{{ app_name }}"
+        image: "{{ acr_login_server }}/{{ app_name }}:{{ image_tag }}"
+        state: started
+        ports:
+          - "443:443"
+        generate_systemd:
+          path: /etc/systemd/system
+          restart_policy: always
+          names: true
+          new: true
+          
+    - name: Recargar systemd para que detecte la unidad nueva
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+
+    - name: Habilitar e iniciar el servicio (persistente a reinicios)
+      ansible.builtin.systemd_service:
+        name: "container-{{ app_name }}.service"
+        enabled: true
+        state: started
