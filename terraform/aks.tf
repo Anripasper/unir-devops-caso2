@@ -4,7 +4,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = azurerm_resource_group.casopract2.name
   dns_prefix          = "${var.prefix}-aks"
 
-  sku_tier = "Free".
+  sku_tier = "Free"
   oidc_issuer_enabled = true
 
   default_node_pool {
