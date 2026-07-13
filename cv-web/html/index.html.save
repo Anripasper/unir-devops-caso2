@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRUEBAS VA BIEN!!! — CV</title>
+  <style>
+    /* Estilo sencillo tipo tarjeta oscura */
+    body  { font-family: 'Segoe UI', Arial, sans-serif; background:#0f172a; color:#e2e8f0; margin:0; padding:3rem 1rem; }
+    .card { max-width:720px; margin:auto; background:#1e293b; padding:2.5rem; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.45); }
+    h1    { color:#38bdf8; margin-top:0; }
+    h2    { color:#7dd3fc; border-bottom:1px solid #334155; padding-bottom:.4rem; }
+    .badge{ display:inline-block; background:#334155; padding:.3rem .8rem; border-radius:6px; margin:.2rem; font-size:.85rem; }
+    footer{ margin-top:2rem; font-size:.8rem; color:#94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <!-- CAMBIA ESTO por tu nombre real -->
+    <h1>SUPER BIEN</h1>
+    <p>Estudiante de administración de sistemas y cloud. Este CV está servido por
+       Nginx dentro de un contenedor Podman sobre una VM de Azure, desplegado
+       al 100% con Terraform y Ansible.</p>
+
+    <h2>Sobre mí</h2>
+    <p>Breve descripción tuya: formación, intereses, objetivos profesionales.</p>
+
+    <h2>Tecnologías de este despliegue</h2>
+    <p>
+      <span class="badge">Terraform</span>
+      <span class="badge">Ansible</span>
+      <span class="badge">Podman</span>
+      <span class="badge">Azure ACR</span>
+      <span class="badge">Nginx + TLS</span>
+      <span class="badge">systemd</span>
+    </p>
+
+    <!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOMBRE APELLIDO — CV</title>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      background: #fdf2f6;
+      color: #5c4450;
+      margin: 0;
+      padding: 4rem 1.5rem;
+    }
+    .tarjeta {
+      max-width: 640px;
+      margin: auto;
+      background: #ffffff;
+      border: 2px solid #f7cad8;
+      border-radius: 18px;
+      padding: 2.5rem;
+      text-align: center;
+    }
+    h1 {
+      color: #d98BA6;
+      font-size: 2.4rem;
+      margin: 0 0 .3rem 0;
+      letter-spacing: 2px;
+    }
+    .lema {
+      color: #b58ba0;
+      font-style: italic;
+      margin-bottom: 2rem;
+    }
+    h2 {
+      color: #c98fae;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 2rem;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #f7cad8;
+      margin: 1.5rem 0;
+    }
+    footer {
+      margin-top: 2.5rem;
+      font-size: .8rem;
+      color: #c0a3b2;
+    }
+  </style>
+</head>
+<body>
+  <div class="tarjeta">
+    <h1>NOMBRE APELLIDO</h1>
+    <p class="lema">Construyendo cosas en la nube, una línea de código cada vez.</p>
+
+    <hr>
+
+    <h2>Sobre mí</h2>
+    <p>Escribe aquí un par de frases sobre ti.</p>
+
+    <h2>Formación</h2>
+    <p>Añade aquí tus estudios.</p>
+
+    <h2>Contacto</h2>
+    <p>tu@email.com</p>
+
+    <footer>Desplegado con Terraform, Ansible y Podman sobre Azure.</footer>
+  </div>
+</body>
+</html>
+</html>

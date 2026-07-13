@@ -1,0 +1,11 @@
+subscription_id      = ""
+prefix               = "cp2"
+location             = "swedencentral"
+admin_username       = "azureuser"
+ssh_public_key_path  = "~/.ssh/id_rsa.pub"
+ssh_private_key_path = "~/.ssh/id_rsa"
+vm_size              = "Standard_B2s_v2"
+aks_node_count       = 1
+aks_node_vm_size     = "Standard_B2s_v2"
+acr_sku              = "Basic"
+my_ip_cidr = ""
